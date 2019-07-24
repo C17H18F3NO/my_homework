@@ -1,3 +1,4 @@
+***类的练习***
 class Hero(object):
     def __init__(self, name, high, width, speed):
         self.name = name
@@ -7,7 +8,7 @@ class Hero(object):
 
     def display_hero(self):
         print(self.name, " ", self.high, " ", self.width, " ", "初始速度：", self.speed)
-
+        
     def action(self, fly, change_size):
         # fly = True
         # change_size = True
