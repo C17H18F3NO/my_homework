@@ -1,4 +1,4 @@
-# 列表中数据的最大值和平均值
+*** 列表中数据的最大值和平均值***
 def avg_max(list):
     total = 0
     max = list[0]
@@ -9,7 +9,7 @@ def avg_max(list):
     return total / len(list), max
 print(avg_max([1, 2, 3, 4]))
 
-# 求二维数组里面每一行的平均值和最大值
+*** 求二维数组里面每一行的平均值和最大值***
 def avg_max1(list1):
     result = []
     for i in list1:
