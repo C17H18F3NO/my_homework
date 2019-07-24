@@ -1,6 +1,32 @@
+# 列表中数据的最大值和平均值
+def avg_max(list):
+    total = 0
+    max = list[0]
+    for i in list:
+        total += i
+        if max < i:
+            max = i
+    return total / len(list), max
+print(avg_max([1, 2, 3, 4]))
+
+# 求二维数组里面每一行的平均值和最大值
+def avg_max1(list1):
+    result = []
+    for i in list1:
+        r = avg_max(i)
+        result.append(r)
+    return result
+print(avg_max1([[1, 2, 3, 4],
+           [5, 2, 9, 4],
+           [1, 4, 3, 4],
+           [1, 2, 3, 7]]))
+
+---------------------------------------------------------------------------------------------------------
+
 ***类的练习***
 class Hero(object):
     def __init__(self, name, high, width, speed):
+        """初始化方法  初始化类属性"""
         self.name = name
         self.high = high
         self.width = width
@@ -8,8 +34,9 @@ class Hero(object):
 
     def display_hero(self):
         print(self.name, " ", self.high, " ", self.width, " ", "初始速度：", self.speed)
-        
+
     def action(self, fly, change_size):
+        """行为  飞行   改变大小"""
         # fly = True
         # change_size = True
         if fly == 1 and change_size == 0:
@@ -41,18 +68,32 @@ class NewHero(Hero):
     def display_new_hero(self):
         print(self.name, " ", self.high, " ", self.width, " ",
               "初始速度：", self.speed, " ", self.blood, " ", self.energy)
-    def action(self):
-        shoot = True
-        if shoot:
+    # def action(self, shoot):  重写父类的action 但是会有警告 因为跟父类的参数个数不同
+    def action1(self, shoot):
+        # shoot = True
+        if shoot == 1:
             self.blood -= 10
+            # return self.blood
+            if self.blood <= 0:
+                self.blood = 0
+                print("英雄重回泉眼再生")
+            return self.blood
         else:
-            self.blood = self.blood
-        return self.blood
+            self.blood -= 10
+            self.energy += 10
+            if self.blood <= 0:
+                self.blood = 0
+                print("英雄重回泉眼再生")
+            if self.energy >= 100:
+                self.energy = 100
+            return self.blood, self.energy
+            # self.blood = self.blood
+        # return self.blood
     def after_new_hero(self):
         print("正心4号血量变为：", self.blood)
 new_hero = NewHero("正心4号", 21, 21, 200, 1000, 100)
 new_hero.display_new_hero()
-new_hero.action()
+new_hero.action1(shoot = 1)
 new_hero.after_new_hero()
 
 class AnotherNewHero(NewHero):
@@ -61,19 +102,23 @@ class AnotherNewHero(NewHero):
         # self.blood = blood
         # self.energy = energy
 
-    def action(self, shoot):
-        # shoot = True
-        if shoot == 1:
-            self.blood -= 10
-            self.energy += 10
-            return self.blood, self.energy
-        else:
-            self.blood = self.blood
-            self.energy = self.energy
-            return self.blood, self.energy
+    # def action(self, shoot):
+    #     # shoot = True
+    #     if shoot == 1:
+    #         self.blood -= 10
+    #         self.energy += 10
+    #         return self.blood, self.energy
+    #     else:
+    #         self.blood = self.blood
+    #         self.energy = self.energy
+    #         return self.blood, self.energy
     def after_another_new_hero(self):
         print("正心5号血量变为：", self.blood, " ", "能量变为：", self.energy)
 another_new_hero = AnotherNewHero("正心5号", 22, 22, 200, 1000, 0)
 another_new_hero.display_new_hero()
-another_new_hero.action(shoot = 1)
+another_new_hero.action1(shoot = 0)
 another_new_hero.after_another_new_hero()
+
+
+-------------------------------------------------------------------------------------------------
+
