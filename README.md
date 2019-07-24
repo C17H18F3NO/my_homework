@@ -68,7 +68,7 @@ class NewHero(Hero):
     def display_new_hero(self):
         print(self.name, " ", self.high, " ", self.width, " ",
               "初始速度：", self.speed, " ", self.blood, " ", self.energy)
-    # def action(self, shoot):  重写父类的action 但是会有警告 因为跟父类的参数个数不同
+    # def action(self, shoot):  重写父类的action 但是会有警告 因为跟父类的参数个数不同 所以下面action1为重写的函数
     def action1(self, shoot):
         # shoot = True
         if shoot == 1:
