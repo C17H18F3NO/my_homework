@@ -122,3 +122,16 @@ another_new_hero.after_another_new_hero()
 
 -------------------------------------------------------------------------------------------------
 
+***TCP***
+import socket
+# 创建一个socket对象
+tcp_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# 链接服务器
+tcp_client_socket.connect(('localhost', 8080))
+# 发送数据
+tcp_client_socket.send('hello world !'.encode('gbk'))
+# 接受数据
+data = tcp_client_socket.recvfrom(1024)
+print(data[0].decode('gbk'))
+# 关闭数据
+tcp_client_socket.close()
