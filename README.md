@@ -216,4 +216,84 @@ if __name__ == '__main__':
     dou.main()
     
     -------------------------------------------------------------------------------------------------
+    
+***多线程***
+import time
+import threading
+import requests
+import re
+import csv
+import json
+
+
+class DouBan(object):
+
+    def get_html(self,base_url):
+        response = requests.get(base_url)
+        return response
+
+    def parsel_html(self, html):
+        dds = re.findall(
+            '<span class="title">(.*?)</span>.*?导演:(.*?)主演:(.*?)<br>.*?<div class="star">.*?average">(.*?)</span>.*?</div>',
+            html, re.S)
+        # print(dds)
+        for d in dds:
+            yield d[0] + d[1] + d[2]
+
+    def write(self, dds, file_name):
+        with open(file=file_name, mode='a', encoding='utf-8') as f:
+            f.write(str(dds))
+            f.write('\n')
+
+    def write_csv(self):
+        with open("豆瓣.csv", 'w+', encoding='utf-8') as csvfile:
+            spamwriter = csv.writer(csvfile, dialect='excel')
+            with open('豆瓣.txt', 'r', encoding='utf-8') as file:
+                for line in file:
+                    line_list = line.strip('\n').split(',')
+                    spamwriter.writerow(line_list)
+
+    def write_json(self):
+        csvfile = open('豆瓣.csv', 'r', encoding='utf-8')
+        jsonfile = open('豆瓣.json', 'w', encoding='utf-8')
+        fieldnames = ('电影名称', '导演', '主演和评分')
+        reader = csv.DictReader(csvfile, fieldnames)
+        for row in reader:
+            json.dump(row, jsonfile, ensure_ascii=False)
+            jsonfile.write('\r\n')
+
+    def main(self, o):
+        # for i in range(0, 250, 25):
+        # response = dou.get_html(base_url='https://movie.douban.com/top250?start=%s&filter=' % i)
+        # dds = dou.parsel_html(response.text)
+        for i in dds:
+            dou.write(i, "豆瓣.txt")
+        dou.write_csv()
+        dou.write_json()
+
+
+if __name__ == '__main__':
+    dou = DouBan()
+    start_time = time.time()
+    for o in range(0, 250, 25):
+        response = dou.get_html(base_url='https://movie.douban.com/top250?start=%s&filter=' % o)
+        dds = dou.parsel_html(response.text)
+        dou.main(o)
+    print('单线程运行时间', time.time() - start_time)
+    start_time = time.time()
+    # base_url = 'https://movie.douban.com/top250?start={}&filter='
+    for o in range(0, 250, 25):
+        base_url = 'https://movie.douban.com/top250?start=%s&filter=' % 0
+        thread = threading.Thread(target=dou.main(o), args=(base_url.format(0),))
+        thread.start()
+    print('多线程运行时间', time.time() - start_time)
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
