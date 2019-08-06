@@ -172,7 +172,7 @@ class DouBan(object):
 
     def parsel_html(self, html):
         dds = re.findall(
-            '<span class="title">(.*?)</span>.*?导演:(.*?)主演:(.*?)<br>.*?<div class="star">.*?average">(.*?)</span>.*?</div>',
+            '<img width="100" alt="(.*?)" src=".*?<p class=""> (.*?)...<br>.*?"v:average">(.*?)</span>.*?</a>',
             html, re.S)
         print(dds)
         for d in dds:
@@ -234,7 +234,7 @@ class DouBan(object):
 
     def parsel_html(self, html):
         dds = re.findall(
-            '<span class="title">(.*?)</span>.*?导演:(.*?)主演:(.*?)<br>.*?<div class="star">.*?average">(.*?)</span>.*?</div>',
+            '<img width="100" alt="(.*?)" src=".*?<p class=""> (.*?)...<br>.*?"v:average">(.*?)</span>.*?</a>',
             html, re.S)
         # print(dds)
         for d in dds:
@@ -283,8 +283,8 @@ if __name__ == '__main__':
     start_time = time.time()
     # base_url = 'https://movie.douban.com/top250?start={}&filter='
     for o in range(0, 250, 25):
-        base_url = 'https://movie.douban.com/top250?start=%s&filter=' % 0
-        thread = threading.Thread(target=dou.main(o), args=(base_url.format(0),))
+        base_url = 'https://movie.douban.com/top250?start=%s&filter=' % o
+        thread = threading.Thread(target=dou.main(o), args=(base_url.format(o),))
         thread.start()
     print('多线程运行时间', time.time() - start_time)
     
