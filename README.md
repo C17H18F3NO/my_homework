@@ -390,6 +390,48 @@ if __name__ == '__main__':
     example.start()
     # d = D()
 
+----------------------------------------------------------------------------------------
+
+"""
+写出一个用户名敏感词过滤装饰器，需要过滤敏感词见 `敏感词表(广告).txt`
+要求使用类装饰器实现，在实例化对象是，一旦名字中出现敏感词表中的内容，提示不能创建对象（或抛出异常）
+"""
+
+
+class Name:
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+
+class Timer:
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        with open('敏感词表(广告).txt', mode='r', encoding='utf-8') as f:
+            data = f.read().split('\n')
+            # print(data)
+        for i in data:
+            if i not in kwargs['name'].name:
+                return self.func(*args, **kwargs)
+            else:
+                print('不允许使用该用户名，请重试')
+                name = Name(str(input("您可以使用字母、数字和英文句点：")))
+                success(name=name)
+                break
+
+@Timer
+def success(name=None):
+    print("%s，创建成功" % name)
+
+
+
+name = Name(str(input("您可以使用字母、数字和英文句点：")))
+success(name=name)
+
     
     
     
