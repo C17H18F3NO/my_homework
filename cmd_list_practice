@@ -1,0 +1,99 @@
+from cmd import Cmd
+
+
+class Example(Cmd):
+    # prompt = ''
+    intro = '看运气的时候到啦，输入range[0,10],看看是不是你想要的结果'
+
+    # list_1 将`['1', '2', '3', '4']`变为数字数组
+    # list_2 将`'5678'`变为数字数组
+    def __init__(self):
+        super().__init__()
+        self.list_1 = list(map(int, ['1', '2', '3', '4']))
+        self.list_2 = list(map(int, (x for x in '5678')))
+
+    # list_map 分别返回两个列表（列表里面都是数字）
+    def do_0(self, arg):
+        print("大表哥:{}".format(self.list_1), "大表姐：{}".format(self.list_2))
+
+    # list_map_sort 分别逆序返回两个列表（列表里面都是数字）
+    def do_1(self, arg):
+        self.list_1.sort(reverse=True)
+        self.list_2.sort(reverse=True)
+        print("倒立的大表哥和大表姐", self.list_1, self.list_2)
+
+    # list_max 分别返回两个列表中的最大值
+    def do_2(self, arg):
+        a = max(self.list_1)
+        b = max(self.list_2)
+        print("大表哥和大表姐最幸运的数字：{} 和 {}".format(a, b))
+
+    # list_sum 分别返回两个列表的和
+    def do_3(self, arg):
+        c = sum(self.list_1)
+        d = sum(self.list_2)
+        print("大表哥和大表哥：{}，大表姐和大表姐：{}".format(c, d))
+
+    def do_4(self, arg):
+        print("哈哈哈哈哈哈哈")
+
+    # list_filter 分别返回两个列表中的偶数位
+    def do_5(self, arg):
+        list_1 = list(filter(lambda i: i % 2 == 0, self.list_1))
+        list_2 = list(filter(lambda i: i % 2 == 0, self.list_2))
+        print("大表哥和大表姐说偶数：", list_1, list_2)
+
+    # list_zip 将两个列表合并后返回
+    def do_6(self, arg):
+        list_3 = list(zip(self.list_1, self.list_2))
+        print("大表哥和大表姐在一起了：{}".format(list_3))
+
+    # list_to_dict 将两个列表变成字典返回，list_1作为健list_2作为值
+    def do_7(self, arg):
+        dictionary = dict(zip(self.list_1, self.list_2))
+        print("神秘的大表哥和大表姐", dictionary)
+
+    def do_8(self, arg):
+        print("不明白cmd为什么需要arg（隐形的箭头指向上一行的arg）")
+        print("老师明亮的双目一定要看到上一行，求解求解")
+
+    def do_9(self,arg):
+        d = D()
+        print(d.list_1_set)
+        i = input("改造大表哥（每输入一个数字跟上一个空格）：").split(' ')
+        d.list_1_set = list(map(int, (x for x in i)))
+        # d.list_1_set = [9, 10, 11, 12]
+        print("改造后的大表哥：{}".format(d.list_1_set))
+
+    def do_10(self, arg):
+        print("敬个礼吖，握握手，你是我的好朋友")
+        return 1
+
+    def start(self):
+        self.cmdloop()
+
+
+# list_1_set 将此类方法设置为属性，访问是用过`对象.list_1_set = [0, 0, 0, 0] ` 就可以修改 `list_1` 的值
+class D(Example):
+
+    def __init__(self):
+        super().__init__()
+        self._list_1_set = [0, 0, 0, 0]
+
+    @property
+    def list_1_set(self):
+        return self._list_1_set
+
+    @list_1_set.setter
+    def list_1_set(self, list):
+        self._list_1_set = list
+
+    @list_1_set.deleter
+    def list_1_set(self):
+        del self._list_1_set
+
+
+if __name__ == '__main__':
+    example = Example()
+    example.start()
+    # d = D()
