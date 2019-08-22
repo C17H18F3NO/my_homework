@@ -47,6 +47,9 @@ except Exception as e:
 # - 插入多条数据, ("rianley", 18), ("Egon", 20), ("wanghui", 21)
 sql = "insert into user(name, age) value(%s, %s);"
 many_data = [('rianley', 18), ('Egon', 20), ('wanghui', 21)]
+# 将上面两句打印出来，看看是传入什么数据
+for i in many_data:
+    print(sql % i)
 cursor.executemany(sql, many_data)
 connection.commit()
 
