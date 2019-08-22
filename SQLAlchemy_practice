@@ -1,0 +1,159 @@
+"""
+使用 sqlalchemy 链接数据库，并实现简单操作：
+
+1. 使用 sqlalchemy  链接一个名为test的数据库对象
+2. 使用test数据库，进行一些简单操作
+   - 简单的创建一个` user` 表，user表中有两个字段：id, name与age。
+3. 使用游标对象，操作数据库中的数据
+   - 插入一条数据, `name` 为 `Tom`, `age` 为 `18`
+   - 再次插入上面一条数据, 报错时执行回滚操作
+   - 插入多条数据, ("rianley", 18), ("Egon", 20), ("wanghui", 21)
+   - 删除id为4的数据
+   - 将 `Tom` 的年龄改为20
+"""
+
+# 使用SQL ALchemy连接数据库需要引擎，创建引擎使用create_engine方法
+# Column定义字段，Integer、String分别为整数和字符串数据类型
+from sqlalchemy import create_engine, Integer, String, Column
+# 创建映射类需要继承声明基类，使用declarative_base
+from sqlalchemy.ext.declarative import declarative_base
+# session 是 sessionmaker类的实例
+from sqlalchemy.orm import sessionmaker
+# and_ 方法进行多条件查询，需要引入，filter_by 方法：
+from sqlalchemy import and_
+# or_ 也是多条件查询，符合任一条件即可
+from sqlalchemy import or_
+
+
+# 1. 使用 sqlalchemy  链接一个名为test的数据库对象
+engine = create_engine('mysql+pymysql://root:123456@127.0.0.1:3306/test?charset=utf8')
+# 创建声明基类时传入引擎
+Base = declarative_base(engine)
+
+
+# 继承声明基类
+class User(Base):
+
+    # 2. 使用test数据库，进行一些简单操作
+    #    - 简单的创建一个` user` 表，user表中有两个字段：id, name与age。
+
+    # 设置数据表名，不可省略
+    __tablename__ = 'user'
+    # 设置该字段为整型、主键、自增
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    # 设置该字段为字符串数据类型、非空约束
+    name = Column(String(20), nullable=False)
+    # 设置该字段为字符串数据类型、非空约束
+    age = Column(String(20), nullable=False)
+
+    # 此特殊方法定义实例的打印样式
+    def __repr__(self):
+        return '<User:{}>'.format(self.name)
+
+
+if __name__ == '__main__':
+    Base.metadata.drop_all()
+    Base.metadata.create_all()
+
+    session = sessionmaker(engine)()
+    # 插入一条数据, `name`为`Tom`, `age`为`18`
+    one_data = User(id=1, name='Tom', age='18')
+    session.add(one_data)
+    session.commit()
+
+    # - 再次插入上面一条数据, 报错时执行回滚操作
+    try:
+        session.add(one_data)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+
+    # - 插入多条数据, ("rianley", 18), ("Egon", 20), ("wanghui", 21)
+    # 用元组解包
+    for (name, age) in [('rianley', 18), ('Egon', 20), ('wanghui', 21)]:
+        many_data = User(name=name, age=age)
+        session.add(many_data)
+        session.commit()
+
+    # - 删除id为4的数据
+    data = session.query(User).all()
+    user = data[3]
+    session.delete(user)
+    session.commit()
+    # 或者：
+# """
+#     data = session.query(User).filter(User.id=='4').first()
+#     print(data)
+#     session.delete(data)
+#     session.commit()
+# """
+
+    # - 将 `Tom` 的年龄改为20
+    usel = data[0]
+    print(data)
+    usel.age = '20'
+    session.add(usel)
+    session.commit()
+
+    # 查询第一条数据
+    print(session.query(User).first())
+
+    # 查询所有数据
+    print(session.query(User).all())
+
+    # filter 方法过滤查询
+    print(session.query(User).filter(User.id=='2').all())
+
+    # filter_by 方法也是常用的过滤方法，且写法更为简洁
+    print(session.query(User).filter_by(name='Egon').first())
+    # 且支持多条件查询
+    print(session.query(User).filter_by(id=1, name='Tom').all())
+
+    # filter方法支持 >、 >= 、 < 、 <= 、 == 、 != 等比较符号
+    print(session.query(User).filter(User.name!='rianley').all())
+
+    # 查询 User 表中全部数据的 name 值
+    for i in session.query(User.name).all():
+        # 查询结果是一个元组
+        print(i)
+        print(i.name)
+
+    # like方法进行模糊查询， % 匹配任意数量的任意字符，_匹配单个任意字符：
+    a = session.query(User).filter(User.name.like('%o%')).all()
+    print(a)
+
+    # 查询名字第二个字母为o 的 User实例
+    b = session.query(User).filter(User.name.like('_o%')).all()
+    print(b)
+
+    # in_方法查询 “某个字段的值属于某个列表” 的数据：
+    c = session.query(User).filter(User.name.in_(['Tom', 'rianley'])).all()
+    print(c)
+
+    # and_方法进行多条件查询，等同于上面 filter_by 方法
+    d = session.query(User).filter(and_(User.name=='Tom', User.id==2)).all()
+    # 没有这个条件，所以打印出来的应该是[]
+    print(d)
+
+    # or_也是多条件查询，符合任一条件即可
+    e = session.query(User).filter(or_(User.name=='Tom', User.id==2)).all()
+    print(e)
+
+    # 查询全部 User实例，按实例的 名字值排序
+    f = session.query(User).order_by(User.name).all()
+    print(f)
+    for user in session.query(User).order_by(User.name).all():
+        print(user.name)
+
+    # desc 方法进行降序排序，默认为升序
+    g = session.query(User).order_by(User.name.desc()).all()
+    print(g)
+
+    # 按 id 字段降序排序，取前 2 条数据
+    h = session.query(User).order_by(User.id.desc()).limit(2).all()
+    print(h)
+
+    # 因为查询结果为有序可迭代对象，所以使用列表的切片也是可以的
+    # 但 limit 方法更可取，因为后者只查询前 2 条数据，对内存的压力要小很多
+    i = session.query(User).order_by(User.id.desc()).all()[:2]
+    print(i)
